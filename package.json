@@ -1,0 +1,23 @@
+{
+  "name": "proshop-v2",
+  "version": "2.0.0",
+  "description": "Ecommerce application build with the MERN stack",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "nodemon backend/server.js",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "Pak Viacheslav",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.3"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "i": "^0.3.7",
+    "nodemon": "^3.1.0"
+  }
+}
