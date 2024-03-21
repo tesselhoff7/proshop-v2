@@ -1,7 +1,8 @@
-import { Navbar, Nav, Container, Badge } from "react-bootstrap";
+import { Badge, Container, Nav, Navbar } from "react-bootstrap";
 import { FaShoppingCart, FaUser } from "react-icons/fa";
-import logo from "..//assets/logo.png";
 import { useSelector } from "react-redux";
+
+import logo from "..//assets/logo.png";
 
 export default function Header() {
   const { cartItems } = useSelector((state) => state.cart);
@@ -24,7 +25,7 @@ export default function Header() {
                 <FaShoppingCart /> Cart
                 {cartItems.length > 0 && (
                   <Badge pill style={{ marginLeft: "5px" }}>
-                    {cartItems.reduce((acc, item) => acc + item.qty, 0)}
+                    {cartItems.reduce((a, c) => Number(a) + Number(c.qty), 0)}
                   </Badge>
                 )}
               </Nav.Link>

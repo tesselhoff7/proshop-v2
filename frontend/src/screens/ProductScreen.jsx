@@ -18,7 +18,7 @@ const ProductScreen = () => {
   const [qty, setQty] = useState(1);
 
   const addToCartHandler = () => {
-    dispatch(addToCart({ productId, qty }));
+    dispatch(addToCart({ ...product, qty }));
     navigate("/cart");
   };
 
