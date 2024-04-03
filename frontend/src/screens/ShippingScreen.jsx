@@ -62,6 +62,16 @@ export default function ShippingScreen() {
           ></Form.Control>
         </Form.Group>
 
+        <Form.Group controlId="address" className="my-2">
+          <Form.Label>Country</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter address"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+
         <Button type="submit" variant="primary" className="my-2">
           Continue
         </Button>
