@@ -11,7 +11,7 @@ const App = () => {
   return (
     <>
       <Header />
-      <main className="py-4">
+      <main className="py-2">
         <Container>
           <Outlet />
         </Container>
