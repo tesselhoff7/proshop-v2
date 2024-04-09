@@ -28,13 +28,13 @@ const PlaceOrderScreen = () => {
   const placeOrderHandler = async () => {
     try {
       const res = await createOrder({
-        orderItems: cart.cartItems,
-        shippingAddress: cart.shippingAddress,
-        paymentMethod: cart.paymentMethod,
-        itemsPrice: cart.itemsPrice,
-        shippingPrice: cart.shippingPrice,
-        taxPrice: cart.taxPrice,
-        totalPrice: cart.totalPrice,
+        orderItems: cart?.cartItems,
+        shippingAddress: cart?.shippingAddress,
+        paymentMethod: cart?.paymentMethod,
+        itemsPrice: cart?.itemsPrice,
+        shippingPrice: cart?.shippingPrice,
+        taxPrice: cart?.taxPrice,
+        totalPrice: cart?.totalPrice,
       }).unwrap();
       dispatch(clearCartItems());
       navigate(`/order/${res._id}`);
