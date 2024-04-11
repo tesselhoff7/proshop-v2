@@ -22,6 +22,8 @@ import PlaceOrderScreen from "./screens/PlaceOrderScreen";
 import OrderScreen from "./screens/OrderScreen";
 import store from "./store";
 
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+
 import "./assets/styles/bootstrap.custom.css";
 import "./assets/styles/index.css";
 
@@ -48,7 +50,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <PayPalScriptProvider deferLoading={true}>
+        <RouterProvider router={router} />
+      </PayPalScriptProvider>
     </Provider>
   </React.StrictMode>
 );
