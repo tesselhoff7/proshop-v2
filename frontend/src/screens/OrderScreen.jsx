@@ -75,7 +75,7 @@ const OrderScreen = () => {
     await payOrder({ orderId, details: { payer: {} } });
     refetch();
 
-    toast.success("Order is pasid");
+    toast.success("Order is pasd");
   }
 
   function onError(err) {
