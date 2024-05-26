@@ -1,11 +1,12 @@
-import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { useEffect } from "react";
+import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import Message from "../components/Message";
+
 import Loader from "../components/Loader";
+import Message from "../components/Message";
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
@@ -96,9 +97,14 @@ const OrderScreen = () => {
       });
   }
 
-  const deliverHandler = async () => {
-    await deliverOrder(orderId);
-    refetch();
+  const deliverOrderHandler = async () => {
+    try {
+      await deliverOrder(orderId);
+      refetch();
+      toast.success("Order is delivered");
+    } catch (error) {
+      toast.error(error?.data?.message || error.error);
+    }
   };
 
   return isLoading ? (
@@ -249,7 +255,7 @@ const OrderScreen = () => {
                     <Button
                       type="button"
                       className="btn btn-block"
-                      onClick={deliverHandler}
+                      onClick={deliverOrderHandler}
                     >
                       Mark As Delivered
                     </Button>
