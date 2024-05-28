@@ -1,12 +1,12 @@
 import React from "react";
 import { Button, Col, Row, Table } from "react-bootstrap";
-import { FaEdit, FaTimes, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import { LinkContainer } from "react-router-bootstrap";
 import { toast } from "react-toastify";
 
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
-import { useCreateProductMutation, useGetProductsQuery } from "../../slices/productsApiSLice";
+import { useCreateProductMutation, useGetProductsQuery } from "../../slices/productsApiSlice";
 
 const ProductListScreen = () => {
   const { data: products, isLoading, error, refetch } = useGetProductsQuery();
@@ -36,9 +36,9 @@ const ProductListScreen = () => {
         </Col>
         <Col className="text-end">
           {/*<LinkContainer to="/admin/product/create">*/}
-            <Button className="my-3" onClick={createProductHandler}>
-              <FaEdit /> Create Product
-            </Button>
+          <Button className="my-3" onClick={createProductHandler}>
+            <FaEdit /> Create Product
+          </Button>
           {/*</LinkContainer>*/}
         </Col>
       </Row>

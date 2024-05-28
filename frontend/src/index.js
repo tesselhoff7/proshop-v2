@@ -9,6 +9,7 @@ import AdminRoute from "./components/AdminRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import reportWebVitals from "./reportWebVitals";
 import OriderListScreen from "./screens/admin/OrderListScreen";
+import ProductEditScreen from "./screens/admin/ProductEditScreen";
 import ProductListScreen from "./screens/admin/ProductListScreen";
 import CartScreen from "./screens/CartScreen";
 import HomeScreen from "./screens/HomeScreen";
@@ -44,7 +45,11 @@ const router = createBrowserRouter(
 
       <Route path="" element={<AdminRoute />}>
         <Route path="/admin/orderList" element={<OriderListScreen />} />
-        <Route path="/admin/productListScreen" element={<ProductListScreen />} />
+        <Route
+          path="/admin/productList"
+          element={<ProductListScreen />}
+        />
+        <Route path="/admin/product/:id/edit" element={<ProductEditScreen />} />
       </Route>
     </Route>
   )
