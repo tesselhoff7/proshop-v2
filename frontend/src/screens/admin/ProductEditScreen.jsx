@@ -9,6 +9,7 @@ import Message from "../../components/Message";
 import {
   useGetProductDetailsQuery,
   useUpdateProductMutation,
+  useUploadProductImageMutation,
 } from "../../slices/productsApiSlice";
 
 const ProductEditScreen = () => {
@@ -27,6 +28,9 @@ const ProductEditScreen = () => {
   const [updateProduct, { isLoading: loadingUpdate, error: errorUpdate }] =
     useUpdateProductMutation();
 
+  const [uploadProductImage, { isLoading: loadingUpload, error: errorUpload }] =
+    useUploadProductImageMutation();
+
   useEffect(() => {
     if (product) {
       setName(product.name);
@@ -38,6 +42,18 @@ const ProductEditScreen = () => {
       setDescription(product.description);
     }
   }, [product]);
+
+  const uploadFileHandler = async (e) => {
+    const formData = new FormData();
+    formData.append("image", e?.target?.files[0]);
+    try {
+      const res = await uploadProductImage(formData).unwrap();
+      toast.success(res?.message);
+      setImage(res?.image);
+    } catch (err) {
+      toast.error(err.data.message || err.error);
+    }
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -100,6 +116,28 @@ const ProductEditScreen = () => {
                   value={image}
                   onChange={(e) => setImage(e.target.value)}
                 />
+              </Form.Group>
+
+              <Form.Group controlId="image">
+                <Form.Label>Image File</Form.Label>
+
+                <Form.Control
+                  type="text"
+                  placeholder="Enter image url"
+                  value={image}
+                  onChange={(e) => setImage(e.target.value)}
+                />
+
+                <Form.Control
+                  type="file"
+                  label="Choose File"
+                  onChange={(e) => uploadFileHandler(e)}
+                ></Form.Control>
+
+                {/*{loadingUpload && <Loader />}
+                {errorUpload && (
+                  <Message variant="danger"> {errorUpload} </Message>
+                )}*/}
               </Form.Group>
 
               <Form.Group controlId="brand">
