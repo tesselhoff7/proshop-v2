@@ -2,7 +2,12 @@ import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
-import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
 
 import App from "./App";
 import AdminRoute from "./components/AdminRoute";
@@ -11,6 +16,7 @@ import reportWebVitals from "./reportWebVitals";
 import OriderListScreen from "./screens/admin/OrderListScreen";
 import ProductEditScreen from "./screens/admin/ProductEditScreen";
 import ProductListScreen from "./screens/admin/ProductListScreen";
+import UserListScreen from "./screens/admin/UserListScreen";
 import CartScreen from "./screens/CartScreen";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -45,11 +51,9 @@ const router = createBrowserRouter(
 
       <Route path="" element={<AdminRoute />}>
         <Route path="/admin/orderList" element={<OriderListScreen />} />
-        <Route
-          path="/admin/productList"
-          element={<ProductListScreen />}
-        />
+        <Route path="/admin/productList" element={<ProductListScreen />} />
         <Route path="/admin/product/:id/edit" element={<ProductEditScreen />} />
+        <Route path="/admin/userlist" element={<UserListScreen />} />
       </Route>
     </Route>
   )
