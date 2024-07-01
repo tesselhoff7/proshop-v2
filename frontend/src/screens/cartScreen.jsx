@@ -16,6 +16,7 @@ import { addToCart, removeFromCart } from "../slices/cartSlice";
 
 export default function CartScreen() {
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   const cart = useSelector((state) => state.cart);
