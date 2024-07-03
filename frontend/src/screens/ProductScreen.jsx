@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,59 +11,58 @@ import {
   Button,
   Form,
 } from "react-bootstrap";
-import Rating from "../components/Rating";
-import Message from "../components/Message";
-import Loader from "../components/Loader";
-import Meta from "../components/Meta";
+import { toast } from "react-toastify";
 import {
-  listProductDetails,
-  createProductReview,
-} from "../actions/productActions";
-import { PRODUCT_CREATE_REVIEW_RESET } from "../constants/productConstants";
+  useGetProductDetailsQuery,
+  useCreateReviewMutation,
+} from "../slices/productsApiSlice";
+import Rating from "../components/Rating";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+import Meta from "../components/Meta";
+import { addToCart } from "../slices/cartSlice";
 
-const ProductScreen = ({ history, match }) => {
+const ProductScreen = () => {
+  const { id: productId } = useParams();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [qty, setQty] = useState(1);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
-  const dispatch = useDispatch();
-
-  const productDetails = useSelector((state) => state.productDetails);
-  const { loading, error, product } = productDetails;
-
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
-  const productReviewCreate = useSelector((state) => state.productReviewCreate);
-  const {
-    success: successProductReview,
-    loading: loadingProductReview,
-    error: errorProductReview,
-  } = productReviewCreate;
-
-  useEffect(() => {
-    if (successProductReview) {
-      setRating(0);
-      setComment("");
-    }
-    if (!product._id || product._id !== match.params.id) {
-      dispatch(listProductDetails(match.params.id));
-      dispatch({ type: PRODUCT_CREATE_REVIEW_RESET });
-    }
-  }, [dispatch, match, successProductReview]);
-
   const addToCartHandler = () => {
-    history.push(`/cart/${match.params.id}?qty=${qty}`);
+    dispatch(addToCart({ ...product, qty }));
+    navigate("/cart");
   };
 
-  const submitHandler = (e) => {
+  const {
+    data: product,
+    isLoading,
+    refetch,
+    error,
+  } = useGetProductDetailsQuery(productId);
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const [createReview, { isLoading: loadingProductReview }] =
+    useCreateReviewMutation();
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    dispatch(
-      createProductReview(match.params.id, {
+
+    try {
+      await createReview({
+        productId,
         rating,
         comment,
-      })
-    );
+      }).unwrap();
+      refetch();
+      toast.success("Review created successfully");
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
   return (
@@ -70,13 +70,15 @@ const ProductScreen = ({ history, match }) => {
       <Link className="btn btn-light my-3" to="/">
         Go Back
       </Link>
-      {loading ? (
+      {isLoading ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error}</Message>
+        <Message variant="danger">
+          {error?.data?.message || error.error}
+        </Message>
       ) : (
         <>
-          <Meta title={product.name} />
+          <Meta title={product.name} description={product.description} />
           <Row>
             <Col md={6}>
               <Image src={product.image} alt={product.name} fluid />
@@ -109,7 +111,6 @@ const ProductScreen = ({ history, match }) => {
                       </Col>
                     </Row>
                   </ListGroup.Item>
-
                   <ListGroup.Item>
                     <Row>
                       <Col>Status:</Col>
@@ -119,6 +120,7 @@ const ProductScreen = ({ history, match }) => {
                     </Row>
                   </ListGroup.Item>
 
+                  {/* Qty Select */}
                   {product.countInStock > 0 && (
                     <ListGroup.Item>
                       <Row>
@@ -127,7 +129,7 @@ const ProductScreen = ({ history, match }) => {
                           <Form.Control
                             as="select"
                             value={qty}
-                            onChange={(e) => setQty(e.target.value)}
+                            onChange={(e) => setQty(Number(e.target.value))}
                           >
                             {[...Array(product.countInStock).keys()].map(
                               (x) => (
@@ -144,10 +146,10 @@ const ProductScreen = ({ history, match }) => {
 
                   <ListGroup.Item>
                     <Button
-                      onClick={addToCartHandler}
                       className="btn-block"
                       type="button"
                       disabled={product.countInStock === 0}
+                      onClick={addToCartHandler}
                     >
                       Add To Cart
                     </Button>
@@ -156,7 +158,7 @@ const ProductScreen = ({ history, match }) => {
               </Card>
             </Col>
           </Row>
-          <Row>
+          <Row className="review">
             <Col md={6}>
               <h2>Reviews</h2>
               {product.reviews.length === 0 && <Message>No Reviews</Message>}
@@ -171,21 +173,16 @@ const ProductScreen = ({ history, match }) => {
                 ))}
                 <ListGroup.Item>
                   <h2>Write a Customer Review</h2>
-                  {successProductReview && (
-                    <Message variant="success">
-                      Review submitted successfully
-                    </Message>
-                  )}
+
                   {loadingProductReview && <Loader />}
-                  {errorProductReview && (
-                    <Message variant="danger">{errorProductReview}</Message>
-                  )}
+
                   {userInfo ? (
                     <Form onSubmit={submitHandler}>
-                      <Form.Group controlId="rating">
+                      <Form.Group className="my-2" controlId="rating">
                         <Form.Label>Rating</Form.Label>
                         <Form.Control
                           as="select"
+                          required
                           value={rating}
                           onChange={(e) => setRating(e.target.value)}
                         >
@@ -197,11 +194,12 @@ const ProductScreen = ({ history, match }) => {
                           <option value="5">5 - Excellent</option>
                         </Form.Control>
                       </Form.Group>
-                      <Form.Group controlId="comment">
+                      <Form.Group className="my-2" controlId="comment">
                         <Form.Label>Comment</Form.Label>
                         <Form.Control
                           as="textarea"
                           row="3"
+                          required
                           value={comment}
                           onChange={(e) => setComment(e.target.value)}
                         ></Form.Control>
@@ -216,7 +214,7 @@ const ProductScreen = ({ history, match }) => {
                     </Form>
                   ) : (
                     <Message>
-                      Please <Link to="/login">sign in</Link> to write a review{" "}
+                      Please <Link to="/login">sign in</Link> to write a review
                     </Message>
                   )}
                 </ListGroup.Item>
