@@ -1,12 +1,11 @@
-import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { useEffect } from "react";
-import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
-import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap";
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-
-import Loader from "../components/Loader";
 import Message from "../components/Message";
+import Loader from "../components/Loader";
 import {
   useDeliverOrderMutation,
   useGetOrderDetailsQuery,
@@ -72,12 +71,12 @@ const OrderScreen = () => {
   }
 
   // TESTING ONLY! REMOVE BEFORE PRODUCTION
-  async function onApproveTest() {
-    await payOrder({ orderId, details: { payer: {} } });
-    refetch();
+  // async function onApproveTest() {
+  //   await payOrder({ orderId, details: { payer: {} } });
+  //   refetch();
 
-    toast.success("Order is pasd");
-  }
+  //   toast.success('Order is paid');
+  // }
 
   function onError(err) {
     toast.error(err.message);
@@ -97,14 +96,9 @@ const OrderScreen = () => {
       });
   }
 
-  const deliverOrderHandler = async () => {
-    try {
-      await deliverOrder(orderId);
-      refetch();
-      toast.success("Order is delivered");
-    } catch (error) {
-      toast.error(error?.data?.message || error.error);
-    }
+  const deliverHandler = async () => {
+    await deliverOrder(orderId);
+    refetch();
   };
 
   return isLoading ? (
@@ -226,12 +220,12 @@ const OrderScreen = () => {
                   ) : (
                     <div>
                       {/* THIS BUTTON IS FOR TESTING! REMOVE BEFORE PRODUCTION! */}
-                      <Button
-                        style={{ marginBottom: "10px" }}
+                      {/* <Button
+                        style={{ marginBottom: '10px' }}
                         onClick={onApproveTest}
                       >
                         Test Pay Order
-                      </Button>
+                      </Button> */}
 
                       <div>
                         <PayPalButtons
@@ -255,7 +249,7 @@ const OrderScreen = () => {
                     <Button
                       type="button"
                       className="btn btn-block"
-                      onClick={deliverOrderHandler}
+                      onClick={deliverHandler}
                     >
                       Mark As Delivered
                     </Button>
